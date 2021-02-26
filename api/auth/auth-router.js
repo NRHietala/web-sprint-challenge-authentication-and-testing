@@ -7,6 +7,7 @@ const {
   validatePost,
   validateUser,
 } = require("../middleware/restricted");
+
 const generateToken = require("../../utils/generateToken");
 
 router.post("/register", async (req, res, next) => {
@@ -26,7 +27,7 @@ router.post("/register", async (req, res, next) => {
   }
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", async (req, res, next) => {
   const { username, password } = req.body;
   try {
     if (isValid(req.body)) {
@@ -37,8 +38,10 @@ router.post("/login", async (req, res) => {
           .status(200)
           .json({ message: `Welcome Back ${tryUser.username}`, token });
       } else {
-        res.status(401).json("username and password required");
+        res.status(401).json("invalid credentials");
       }
+    } else {
+      res.status(400).json("username and password required");
     }
   } catch (error) {
     res.status(500).json("invalid credentials");
