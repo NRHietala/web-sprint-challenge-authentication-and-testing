@@ -2,7 +2,11 @@ const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 
 const User = require("../users/users-model");
-const { isValid } = require("../middleware/restricted");
+const {
+  isValid,
+  validatePost,
+  validateUser,
+} = require("../middleware/restricted");
 const generateToken = require("../../utils/generateToken");
 
 router.post("/register", async (req, res, next) => {
