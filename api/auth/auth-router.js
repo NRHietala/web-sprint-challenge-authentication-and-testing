@@ -12,7 +12,7 @@ const generateToken = require("../../utils/generateToken");
 router.post("/register", async (req, res, next) => {
   const credentials = req.body;
   try {
-    if (credentials) {
+    if (isValid(credentials)) {
       const rounds = process.env.BCRYPT_ROUNDS || 10;
       const hash = bcrypt.hashSync(credentials.password, rounds);
       credentials.password = hash;

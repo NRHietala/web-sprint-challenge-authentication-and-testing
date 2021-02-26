@@ -15,6 +15,9 @@ server.use(cors());
 server.use(express.json());
 
 server.use("/api/auth", authRouter);
-server.use("/api/jokes", restricted, jokesRouter); // only logged-in users should have access!
+server.use("/api/jokes", restricted, jokesRouter);
 
+server.get("/", (_, res) => {
+  res.status(200).json("Your API is running, better go catch it!");
+});
 module.exports = server;
