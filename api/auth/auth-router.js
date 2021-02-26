@@ -1,7 +1,23 @@
-const router = require('express').Router();
+const router = require("express").Router();
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
-router.post('/register', (req, res) => {
-  res.end('implement register, please!');
+router.post("/register", async (req, res, next) => {
+  const credentials = req.body;
+  try {
+    if (credentials) {
+      const rounds = process.env.BCRYPT_ROUNDS || 10;
+      const hash = bcrypt.hashSync(credentials.password, rounds);
+      credentials.password = hash;
+      const newUser = await User.add(credentials); // check dupe name in model
+      res.status(201).json(newUser);
+    } else {
+      res.status(400).json("username and password required");
+    }
+  } catch (error) {
+    next(error);
+  }
+
   /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
@@ -28,8 +44,8 @@ router.post('/register', (req, res) => {
   */
 });
 
-router.post('/login', (req, res) => {
-  res.end('implement login, please!');
+router.post("/login", (req, res) => {
+  res.end("implement login, please!");
   /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
@@ -53,6 +69,14 @@ router.post('/login', (req, res) => {
     4- On FAILED login due to `username` not existing in the db, or `password` being incorrect,
       the response body should include a string exactly as follows: "invalid credentials".
   */
+});
+
+router.use((error, req, res, next) => {
+  res.status(500).json({
+    info: "Error occurred inside authRouter",
+    message: error.message,
+    stack: error.stack,
+  });
 });
 
 module.exports = router;
